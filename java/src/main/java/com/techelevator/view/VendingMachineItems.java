@@ -1,26 +1,33 @@
 package com.techelevator.view;
 
 public class VendingMachineItems {
-    //instance variables
-    //Each vending machine item has a Name and a Price.
-    private String name;
-    private double price;
-    private String slot;
-    private String foodType;
-    private int quantityRemaining;
-    //getters
-    public String getName() { return name; }
-    public double getPrice() { return price; }
-    public int getQuantityRemaining() {return quantityRemaining;}
-    public String getSlot() { return slot;}
-    public String getFoodType() {return foodType;}
-    //constructor
 
-    public VendingMachineItems(String slot, String name, double price, String foodType) {
-        this.slot = slot;
-        this.name = name;
-        this.price = price;
-        this.foodType = foodType;
+    //Each vending machine item has a Name and a Price.
+
+
+    //instance variables
+    private String itemSlot;
+    private String itemName;
+    private double itemPrice;
+    private String itemFoodType;
+    private int quantityRemaining;
+
+
+    //getters
+    public String getItemSlot() { return itemSlot; }
+    public String getItemName() { return itemName; }
+    public double getItemPrice() { return itemPrice; }
+    public String getItemFoodType() { return itemFoodType; }
+    public int getQuantityRemaining() { return quantityRemaining; }
+
+
+    //constructor
+    public VendingMachineItems(String itemSlot, String itemName, double itemPrice, String itemFoodType) {
+        this.itemSlot = itemSlot;
+        this.itemName = itemName;
+        this.itemPrice = itemPrice;
+        this.itemFoodType = itemFoodType;
         this.quantityRemaining = 5;
     }
+
 }
