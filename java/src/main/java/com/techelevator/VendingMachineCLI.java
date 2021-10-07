@@ -55,6 +55,7 @@ public class VendingMachineCLI {
 
 	private static void displayVendingMachineItems() {
 		try (Scanner readFile = new Scanner(new File("vendingmachine.csv"))) {
+			System.out.println();
 			while(readFile.hasNextLine()) {
 
 				String line = readFile.nextLine();
@@ -67,7 +68,7 @@ public class VendingMachineCLI {
 
 				itemsList.add(item);
 
-				System.out.println(item.getItemSlot()+ ") " +item.getItemName()+ " - $" +item.getItemPrice()+ " - "+item.getQuantityRemaining() +" Available");
+				System.out.println(item.getItemSlot()+ ") " + item.getItemName() + " - $" + String.format("%.2f", item.getItemPrice()) + " - " + item.getQuantityRemaining() + " Available");
 				}
 
 		} catch (Exception e) {
@@ -83,7 +84,8 @@ public class VendingMachineCLI {
 	private void displayVendingMachineOptions() {
 		while (true) {
 			System.out.println();
-			System.out.println("Current Money Provided: " + currentBalance.getCurrentBalance());
+			System.out.format("Current Money Provided: $%.2f", currentBalance.getCurrentBalance());
+			System.out.println();
 
 			String choice = (String) menu.getChoiceFromOptions(OPTIONS_MENU_OPTIONS);
 
@@ -103,27 +105,62 @@ public class VendingMachineCLI {
 
 
 	private Balance insertMoney() {
+		System.out.println();
 		System.out.print("How much money would you like to deposit: ");
 		String moneyDeposited = userInput.nextLine();
 
-		int methodReturnMoneyDeposited = 0;
+		double methodReturnMoneyDeposited = 0;
 
-		while (methodReturnMoneyDeposited == 0) {
-			try {
-				methodReturnMoneyDeposited = Integer.parseInt(moneyDeposited);
-				if (methodReturnMoneyDeposited == 0) {
-					System.out.print("0 doesn't do anything. Please deposit another bill: ");
-					moneyDeposited = userInput.nextLine();
-				}
-			} catch (Exception e) {
-				System.out.print("This is not a bill. Try again for a non-zero integer number. Try again: ");
-				moneyDeposited = userInput.nextLine();
-			}
+		try {
+			methodReturnMoneyDeposited = Double.parseDouble(moneyDeposited);
+		} catch (Exception e) {
+			System.out.print("This is not a real bill. Try again for a non-zero integer number. Try again: ");
+			moneyDeposited = userInput.nextLine();
 		}
 
-		currentBalance.deposit(methodReturnMoneyDeposited);
+
+
+
+		if (methodReturnMoneyDeposited == 1 || methodReturnMoneyDeposited == 2 || methodReturnMoneyDeposited == 5 || methodReturnMoneyDeposited == 10 || methodReturnMoneyDeposited == 20) {
+			currentBalance.deposit(methodReturnMoneyDeposited);
+			return currentBalance;
+		}
+
+		System.out.print("XXWe don't accept this bill. Please deposit another bill: ");
 
 		return currentBalance;
+
+//		//int[] bills = {100, 50, 20, 10, 5, 2, 1};
+//		int methodReturnMoneyDeposited = 0;
+//
+//		while (methodReturnMoneyDeposited == 0) {
+//			try {
+//				methodReturnMoneyDeposited = Integer.parseInt(moneyDeposited);
+//				if (methodReturnMoneyDeposited == 0) {
+//					System.out.print("0 is not a bill. Please deposit another bill: ");
+//					moneyDeposited = userInput.nextLine();
+//				}
+//				if (methodReturnMoneyDeposited)
+//
+////				boolean isRealMoney = false;
+////
+////				for (int amount : bills) {
+////					if (methodReturnMoneyDeposited == amount) {
+////						isRealMoney = true;
+////						currentBalance.deposit(methodReturnMoneyDeposited);
+////					}
+////				}
+////				if (isRealMoney = false) {
+////					System.out.print("We don't accept this bill. Please deposit another bill: ");
+////					moneyDeposited = userInput.nextLine();
+////				}
+//			} catch (Exception e) {
+//				System.out.print("This is not a real bill. Try again for a non-zero integer number. Try again: ");
+//				moneyDeposited = userInput.nextLine();
+//			}
+//		}
+//
+//		return currentBalance;
 	}
 
 

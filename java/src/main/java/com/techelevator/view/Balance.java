@@ -3,21 +3,21 @@ package com.techelevator.view;
 public class Balance {
 
     //instance variables
-    private int currentBalance;
+    private double currentBalance;
 
     //getters
-    public int getCurrentBalance() { return currentBalance; }
+    public double getCurrentBalance() { return currentBalance; }
 
     //constructor
-    public Balance(int currentBalance) {
+    public Balance(double currentBalance) {
         this.currentBalance = currentBalance;
     }
 
     //derived methods
-    public int deposit(int amountToDeposit) {
+    public double deposit(double amountToDeposit) {
         return currentBalance += amountToDeposit;
     }
-    public int purchase(int amountOfPurchase) {
+    public double purchase(double amountOfPurchase) {
         return currentBalance -= amountOfPurchase;
     }
 
