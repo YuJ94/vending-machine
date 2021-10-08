@@ -4,17 +4,19 @@ import java.io.File;
 import java.util.*;
 
 public class VendingMachine {
-    private Map<String,VendingMachineItems> inventory = new LinkedHashMap<>();
 
-    public Map<String, VendingMachineItems> getInventory() {
-        return inventory;
-    }
+    //instance variables
+    private Map<String, VendingMachineItems> currentInventory = new LinkedHashMap<>();
 
-    //private List<VendingMachineItems> itemsList = new ArrayList<>();
+    //getters
+    public Map<String, VendingMachineItems> getCurrentInventory() { return currentInventory; }
 
+    //constructor
     public VendingMachine() {
         loadVendingMachineItems();
     }
+
+    //methods
     public void loadVendingMachineItems() {
         try (Scanner readFile = new Scanner(new File("vendingmachine.csv"))) {
             System.out.println();
@@ -24,15 +26,13 @@ public class VendingMachine {
 
                 String[] itemArray = line.split("\\|");
 
-                VendingMachineItems item = new VendingMachineItems(itemArray[0], itemArray[1], (Double.parseDouble((itemArray[2]))), itemArray[3]);
+                String slot = itemArray[0];
 
-                inventory.put(item.getItemSlot(),item);
+                VendingMachineItems item = new VendingMachineItems(itemArray[1], (Double.parseDouble((itemArray[2]))), itemArray[3]);
 
-              //  itemsList.add(item);
-
+                currentInventory.put(slot, item);
 
             }
-
         } catch (Exception e) {
             System.out.println("ERROR FOUND:");
             System.out.println("Please check the format of the input file.");
@@ -40,7 +40,5 @@ public class VendingMachine {
             System.out.println("The format should be \"Slot Location\" | \"Product Name\" | \"Price\" | \"Type\".");
         }
     }
-
-
 
 }

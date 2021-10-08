@@ -13,12 +13,16 @@ public class Balance {
         this.currentBalance = currentBalance;
     }
 
-    //derived methods
+    //methods
     public double deposit(double amountToDeposit) {
         return currentBalance += amountToDeposit;
     }
     public double purchase(double amountOfPurchase) {
         return currentBalance -= amountOfPurchase;
+    }
+    public double zeroBalance() {
+        currentBalance = 0;
+        return currentBalance;
     }
 
 }
