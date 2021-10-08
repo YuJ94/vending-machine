@@ -2,16 +2,19 @@ package com.techelevator;
 
 import com.techelevator.view.Balance;
 import com.techelevator.view.Menu;
+import com.techelevator.view.VendingMachine;
 import com.techelevator.view.VendingMachineItems;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class VendingMachineCLI {
 
 	private Menu menu;
+	private VendingMachine vm = new VendingMachine();
 
 	private static final String MAIN_MENU_OPTION_DISPLAY_ITEMS = "Display Vending Machine Items";
 	private static final String MAIN_MENU_OPTION_PURCHASE = "Purchase";
@@ -35,7 +38,7 @@ public class VendingMachineCLI {
 			String choice = (String) menu.getChoiceFromOptions(MAIN_MENU_OPTIONS);
 
 			if (choice.equals(MAIN_MENU_OPTION_DISPLAY_ITEMS)) {
-				displayVendingMachineItems();
+				display();
 			} else if (choice.equals(MAIN_MENU_OPTION_PURCHASE)) {
 				displayVendingMachineOptions();
 			} else if (choice.equals(MAIN_MENU_OPTION_EXIT)) {
@@ -52,32 +55,44 @@ public class VendingMachineCLI {
 		cli.run();
 	}
 
+	public void display() {
 
-	private static void displayVendingMachineItems() {
-		try (Scanner readFile = new Scanner(new File("vendingmachine.csv"))) {
-			System.out.println();
-			while(readFile.hasNextLine()) {
+		for (Map.Entry<String, VendingMachineItems> items : vm.getInventory().entrySet()) {
+			String slot = items.getKey();
+			VendingMachineItems vmItem = items.getValue();
 
-				String line = readFile.nextLine();
-
-				String[] itemArray = line.split("\\|");
-
-				VendingMachineItems item = new VendingMachineItems(itemArray[0], itemArray[1], (Double.parseDouble((itemArray[2]))), itemArray[3]);
-
-				List<VendingMachineItems> itemsList = new ArrayList<>();
-
-				itemsList.add(item);
-
-				System.out.println(item.getItemSlot()+ ") " + item.getItemName() + " - $" + String.format("%.2f", item.getItemPrice()) + " - " + item.getQuantityRemaining() + " Available");
-				}
-
-		} catch (Exception e) {
-			System.out.println("ERROR FOUND:");
-			System.out.println("Please check the format of the input file.");
-			System.out.println("File should be read as a pipe | delimited file.");
-			System.out.println("The format should be \"Slot Location\" | \"Product Name\" | \"Price\" | \"Type\".");
+			System.out.println(slot + vmItem.getItemName() + vmItem.getItemPrice());
 		}
+
+
 	}
+
+//
+//	private static void displayVendingMachineItems() {
+//		try (Scanner readFile = new Scanner(new File("vendingmachine.csv"))) {
+//			System.out.println();
+//			while(readFile.hasNextLine()) {
+//
+//				String line = readFile.nextLine();
+//
+//				String[] itemArray = line.split("\\|");
+//
+//				VendingMachineItems item = new VendingMachineItems(itemArray[0], itemArray[1], (Double.parseDouble((itemArray[2]))), itemArray[3]);
+//
+//				List<VendingMachineItems> itemsList = new ArrayList<>();
+//
+//				itemsList.add(item);
+//
+//				System.out.println(item.getItemSlot()+ ") " + item.getItemName() + " - $" + String.format("%.2f", item.getItemPrice()) + " - " + item.getQuantityRemaining() + " Available");
+//				}
+//
+//		} catch (Exception e) {
+//			System.out.println("ERROR FOUND:");
+//			System.out.println("Please check the format of the input file.");
+//			System.out.println("File should be read as a pipe | delimited file.");
+//			System.out.println("The format should be \"Slot Location\" | \"Product Name\" | \"Price\" | \"Type\".");
+//		}
+//	}
 
 
 
