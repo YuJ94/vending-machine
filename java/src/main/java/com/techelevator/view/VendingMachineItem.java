@@ -1,6 +1,6 @@
 package com.techelevator.view;
 
-public class VendingMachineItems {
+public class VendingMachineItem {
 
     //instance variables
     private String itemName;
@@ -15,11 +15,11 @@ public class VendingMachineItems {
     public int getQuantityRemaining() { return quantityRemaining; }
 
     //constructor
-    public VendingMachineItems(String itemName, double itemPrice, String itemFoodType) {
+    public VendingMachineItem(String itemName, double itemPrice, String itemFoodType) {
         this.itemName = itemName;
         this.itemPrice = itemPrice;
         this.itemFoodType = itemFoodType;
-        this.quantityRemaining = 2;
+        this.quantityRemaining = 5;
     }
 
     //methods
@@ -30,6 +30,25 @@ public class VendingMachineItems {
             this.quantityRemaining--;
         }
         return this.quantityRemaining;
+    }
+
+    public String foodType() {
+        String makeSound = "";
+
+        if (getItemFoodType().equals("Chip")) {
+            makeSound = "Crunch Crunch, Yum!";
+        }
+        if (getItemFoodType().equals("Candy")) {
+            makeSound = "Munch Munch, Yum!";
+        }
+        if (getItemFoodType().equals("Drink")) {
+            makeSound = "Glug Glug, Yum!";
+        }
+        if (getItemFoodType().equals("Gum")) {
+            makeSound = "Chew Chew, Yum!";
+        }
+
+        return "\n" + makeSound ;
     }
 
 }
