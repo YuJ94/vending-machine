@@ -8,22 +8,16 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Scanner;
 
-
 public class VendingMachine {
 
     //instance variables
+    private File inventoryFile = new File("C:\\Users\\Student\\Workspace\\mod1-capstone-blue-t10\\java\\vendingmachine.csv");
     private Map<String, VendingMachineItem> currentInventory = new LinkedHashMap<>();
-    private File inventoryFile = new File("C:\\Users\\Student\\workspace\\mod1-capstone-blue-t10\\vendingmachine.csv");
-
-    public File getInventoryFile() { return inventoryFile;}
-
     private Balance balance = new Balance(0);
 
     //getters
     public Map<String, VendingMachineItem> getCurrentInventory() { return currentInventory; }
     public Balance getBalance() { return balance; }
-
-
 
     //constructor
     public VendingMachine(File inventoryFile) {
@@ -38,13 +32,13 @@ public class VendingMachine {
 
                 String line = readFile.nextLine();
 
-                String[] itemArray = line.split("\\|");
+                String[] lineArray = line.split("\\|");
 
-                String slot = itemArray[0];
+                String itemSlot = lineArray[0];
 
-                VendingMachineItem item = new VendingMachineItem(itemArray[1], (Double.parseDouble((itemArray[2]))), itemArray[3]);
+                VendingMachineItem itemInfo = new VendingMachineItem(lineArray[1], (Double.parseDouble((lineArray[2]))), lineArray[3]);
 
-                currentInventory.put(slot, item);
+                currentInventory.put(itemSlot, itemInfo);
 
             }
         } catch (Exception e) {
@@ -55,78 +49,78 @@ public class VendingMachine {
             System.out.println("The format should be \"Slot Location\" | \"Product Name\" | \"Price\" | \"Type\".");
         }
     }
-    public String displayItems() {
 
-		String display = "";
+    public String displayItems() {
+		String displayItems = "";
+
 		for (Map.Entry<String, VendingMachineItem> items : getCurrentInventory().entrySet()) {
-			String slot = items.getKey();
+			String itemSlot = items.getKey();
 			VendingMachineItem vmItem = items.getValue();
 
-			display += String.format(("%-5s %-25s $%.2f\n"),slot, vmItem.getItemName(), vmItem.getItemPrice()); //
+            displayItems += String.format(("%-5s %-25s $%.2f\n"), itemSlot, vmItem.getItemName(), vmItem.getItemPrice());
 		}
-		return display;
+
+		return displayItems;
 	}
 
     public String getMoneyParsed(String userInputMoneyDeposited) {
         double moneyParsed = 0;
-        String message = "";
+        String depositMessage = "";
 
         while (moneyParsed == 0) {
             try {
                 moneyParsed = Double.parseDouble(userInputMoneyDeposited);
-                if (moneyParsed == 0) { break; }
-            } catch (Exception e) { break; }
+                if (moneyParsed == 0) {
+                    break;
+                }
+            } catch (Exception e) {
+                break;
+            }
         }
 
         if (moneyParsed == 1 || moneyParsed == 2 || moneyParsed == 5 || moneyParsed == 10 || moneyParsed == 20) {
             balance.deposit(moneyParsed);
-          log(currentTime() + " FEED MONEY: " + String.format("$%.2f", moneyParsed) + " " +
-                 String.format("$%.2f", balance.getCurrentBalance()));
-            return message;
 
+            log(currentTime() + " FEED MONEY: " + String.format("$%.2f", moneyParsed) + " " + String.format("$%.2f", balance.getCurrentBalance()));
+
+            return depositMessage;
         } else {
-            message = "\n" + "We don't accept this bill. Try again" + "\n"; }
+            depositMessage = "\n" + "We don't accept this bill. Try again.";
+        }
 
-            return message;
+        return depositMessage;
     }
 
     public String getItemSelection(String userSelection) {
         boolean	isAKey = getCurrentInventory().containsKey(userSelection);
-        String itemSelection = "";
+        String itemSelectionMessage = "";
 
         if (!isAKey) {
-
-            itemSelection = "This is not a valid code. Try again.";
-            return  itemSelection;
+            itemSelectionMessage = "This is not a valid code. Try again.";
+            return itemSelectionMessage;
         }
+
         double userSelectionItemPrice = getCurrentInventory().get(userSelection).getItemPrice();
 
         if (getBalance().getCurrentBalance() >= userSelectionItemPrice) {
-            if (userSelectionItemPrice > getBalance().getCurrentBalance()) {
-
-                itemSelection = ("You do not have enough money. Make another selection or deposit more money.");
-                return itemSelection;
-            }
             if (getCurrentInventory().get(userSelection).getQuantityRemaining() <= 0) {
-                itemSelection = ("This item is SOLD OUT. Make another selection.");
+                itemSelectionMessage = ("This item is SOLD OUT. Make another selection.");
             } else {
                 getBalance().purchase(userSelectionItemPrice);
                 getCurrentInventory().get(userSelection).subtractQuantity();
 
-                itemSelection = (getCurrentInventory().get(userSelection).getItemName() + " " +
-                        String.format("$%.2f",getCurrentInventory().get(userSelection).getItemPrice()) + "\n" + getCurrentInventory().get(userSelection).foodType());
+                itemSelectionMessage = (getCurrentInventory().get(userSelection).getItemName() + " " + String.format("$%.2f",getCurrentInventory().get(userSelection).getItemPrice()) + "\n" + getCurrentInventory().get(userSelection).foodType());
 
-              log(currentTime() + " " + getCurrentInventory().get(userSelection).getItemName() + " " + userSelection + " " + String.format("$%.2f", (balance.getCurrentBalance() + getCurrentInventory().get(userSelection).getItemPrice())) + " " + String.format("$%.2f", balance.getCurrentBalance()));
+                log(currentTime() + " " + getCurrentInventory().get(userSelection).getItemName() + " " + userSelection + " " + String.format("$%.2f", (balance.getCurrentBalance() + getCurrentInventory().get(userSelection).getItemPrice())) + " " + String.format("$%.2f", balance.getCurrentBalance()));
             }
         } else {
-            itemSelection = ("You do not have enough money. Make a deposit.");
-
+            itemSelectionMessage = ("You do not have enough money. Try again.");
         }
-        return itemSelection;
+
+        return itemSelectionMessage;
     }
 
    public String spitOutChange() {
-
         double coins = balance.getCurrentBalance();
         DecimalFormat df2 = new DecimalFormat("###.##");
 
@@ -136,41 +130,30 @@ public class VendingMachine {
         int pennies = 0;
 
         int numberOfQuarters = (int) (coins / .25);
-
         quarters += numberOfQuarters;
-
-       double remainderAfterQuarters = coins % .25;
-
-       double roundedRemainderAfterQuarters = Double.valueOf(df2.format(remainderAfterQuarters));
+        double remainderAfterQuarters = coins % .25;
+        double roundedRemainderAfterQuarters = Double.valueOf(df2.format(remainderAfterQuarters));
 
         int numberOfDimes = (int) (roundedRemainderAfterQuarters / .10);
-
         dimes += numberOfDimes;
-
         double remainderAfterDimes = (roundedRemainderAfterQuarters % .10);
-
         double roundedRemainderAfterDimes = Double.valueOf(df2.format(remainderAfterDimes));
 
         int numberOfNickels = (int) (roundedRemainderAfterDimes / .05);
-
         nickels += numberOfNickels;
-
         double remainderAfterNickels = (roundedRemainderAfterDimes % .05);
-
-         double roundedRemainderAfterNickels = Double.valueOf(df2.format(remainderAfterNickels));
+        double roundedRemainderAfterNickels = Double.valueOf(df2.format(remainderAfterNickels));
 
         int numberOfPennies = (int) (roundedRemainderAfterNickels / .01);
-
         pennies += numberOfPennies;
 
-     log(currentTime() + " GIVE CHANGE: " + String.format("$%.2f", balance.getCurrentBalance()) + " " + String.format("$%.2f", balance.zeroBalance()));
+        log(currentTime() + " GIVE CHANGE: " + String.format("$%.2f", balance.getCurrentBalance()) + " " + String.format("$%.2f", balance.zeroBalance()));
 
         return "You received your change back: " + quarters + " quarters, " + dimes + " dimes, " + nickels + " nickels, " + pennies + " pennies.";
-
     }
 
     private void log(String input) {
-        try (PrintWriter appendFile = new PrintWriter(new FileOutputStream("C:\\Users\\Student\\workspace\\mod1-capstone-blue-t10\\log.txt", true))) {
+        try (PrintWriter appendFile = new PrintWriter(new FileOutputStream("C:\\Users\\Student\\Workspace\\mod1-capstone-blue-t10\\java\\log.txt", true))) {
             appendFile.println(input);
         } catch (Exception e) {
             System.out.println("Exception: " + e.getMessage());
@@ -182,8 +165,5 @@ public class VendingMachine {
         Date now = new Date(System.currentTimeMillis());
         return dateFormatter.format(now);
     }
-
-
-
 
 }

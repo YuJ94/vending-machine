@@ -48,7 +48,7 @@ public class VendingMachineItem {
             makeSound = "Chew Chew, Yum!";
         }
 
-        return "\n" + makeSound ;
+        return "\n" + makeSound;
     }
 
 }

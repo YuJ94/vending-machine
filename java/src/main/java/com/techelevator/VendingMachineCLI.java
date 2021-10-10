@@ -1,22 +1,16 @@
 package com.techelevator;
 
-import com.techelevator.view.Balance;
 import com.techelevator.view.Menu;
 import com.techelevator.view.VendingMachine;
-//import com.techelevator.view.VendingMachineItems;
+
 import java.io.File;
 import java.util.Scanner;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 public class VendingMachineCLI {
 
 	private Menu menu;
-	private File inventoryFile = new File("C:\\Users\\Student\\workspace\\mod1-capstone-blue-t10\\vendingmachine.csv");
+	private File inventoryFile = new File("C:\\Users\\Student\\Workspace\\mod1-capstone-blue-t10\\java\\vendingmachine.csv");
 	private VendingMachine vm = new VendingMachine(inventoryFile);
-
 
 	private static Scanner userInput = new Scanner(System.in);
 
@@ -57,7 +51,6 @@ public class VendingMachineCLI {
 		cli.run();
 	}
 
-
 	private void displayVendingMachineOptions() {
 		while (true) {
 			System.out.println();
@@ -69,6 +62,7 @@ public class VendingMachineCLI {
 			if (choice.equals(OPTIONS_MENU_FEED_MONEY)) {
 				insertMoney();
 			} else if (choice.equals(OPTIONS_MENU_SELECT_PRODUCT)) {
+				System.out.println();
 				selectItem();
 			} else if (choice.equals(OPTIONS_MENU_FINISH_TRANSACTION)) {
 				System.out.println();
@@ -79,15 +73,17 @@ public class VendingMachineCLI {
 		}
 	}
 
-	private double insertMoney() {
+	private void insertMoney() {
 		System.out.println();
 		System.out.print("How much money would you like to deposit: ");
 		String userInputMoneyDeposited = userInput.nextLine();
 
-		String message = vm.getMoneyParsed(userInputMoneyDeposited);
-		System.out.println(message);
+		String result = vm.getMoneyParsed(userInputMoneyDeposited);
 
-		return vm.getBalance().getCurrentBalance();
+		if (!result.equals("")) {
+			System.out.println(result);
+		}
+
 	}
 
 	private void selectItem() {
@@ -99,7 +95,6 @@ public class VendingMachineCLI {
 		try {
 			System.out.println();
 			System.out.println(vm.getItemSelection(userSelection));
-			System.out.println();
 
 		} catch (Exception e) {
 
