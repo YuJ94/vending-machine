@@ -32,7 +32,7 @@ public class VendingMachineItem {
         return this.quantityRemaining;
     }
 
-    public String foodType() {
+    public String foodTypeSound() {
         String makeSound = "";
 
         if (getItemFoodType().equals("Chip")) {

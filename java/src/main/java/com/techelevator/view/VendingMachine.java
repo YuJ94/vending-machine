@@ -19,6 +19,9 @@ public class VendingMachine {
     public Map<String, VendingMachineItem> getCurrentInventory() { return currentInventory; }
     public Balance getBalance() { return balance; }
 
+    //setters
+    public void setBalance(Balance balance) { this.balance = balance; }
+
     //constructor
     public VendingMachine(File inventoryFile) {
         loadVendingMachineItems();
@@ -39,7 +42,6 @@ public class VendingMachine {
                 VendingMachineItem itemInfo = new VendingMachineItem(lineArray[1], (Double.parseDouble((lineArray[2]))), lineArray[3]);
 
                 currentInventory.put(itemSlot, itemInfo);
-
             }
         } catch (Exception e) {
             System.out.println("ERROR FOUND:" + e.getMessage());
@@ -57,13 +59,18 @@ public class VendingMachine {
 			String itemSlot = items.getKey();
 			VendingMachineItem vmItem = items.getValue();
 
-            displayItems += String.format(("%-5s %-25s $%.2f\n"), itemSlot, vmItem.getItemName(), vmItem.getItemPrice());
+			if (vmItem.getQuantityRemaining() == 0) {
+                displayItems += String.format(("%-5s %-25s $%.2f\n"), itemSlot, "SOLD OUT", vmItem.getItemPrice());
+            } else {
+                displayItems += String.format(("%-5s %-25s $%.2f\n"), itemSlot, vmItem.getItemName(), vmItem.getItemPrice());
+            }
+
 		}
 
 		return displayItems;
 	}
 
-    public String getMoneyParsed(String userInputMoneyDeposited) {
+    public String depositMoney(String userInputMoneyDeposited) {
         double moneyParsed = 0;
         String depositMessage = "";
 
@@ -91,27 +98,33 @@ public class VendingMachine {
         return depositMessage;
     }
 
-    public String getItemSelection(String userSelection) {
+    public double getCurrentAmount() {
+        return balance.getCurrentBalance();
+    }
+
+    public String itemSelection(String userSelection) {
         boolean	isAKey = getCurrentInventory().containsKey(userSelection);
         String itemSelectionMessage = "";
+        VendingMachineItem userItemSelection = getCurrentInventory().get(userSelection);
 
         if (!isAKey) {
             itemSelectionMessage = "This is not a valid code. Try again.";
             return itemSelectionMessage;
         }
 
-        double userSelectionItemPrice = getCurrentInventory().get(userSelection).getItemPrice();
+        double userSelectionItemPrice = userItemSelection.getItemPrice();
 
-        if (getBalance().getCurrentBalance() >= userSelectionItemPrice) {
-            if (getCurrentInventory().get(userSelection).getQuantityRemaining() <= 0) {
+        if (getCurrentAmount() >= userSelectionItemPrice) {
+            if (userItemSelection.getQuantityRemaining() <= 0) {
                 itemSelectionMessage = ("This item is SOLD OUT. Make another selection.");
             } else {
-                getBalance().purchase(userSelectionItemPrice);
-                getCurrentInventory().get(userSelection).subtractQuantity();
+                balance.purchase(userSelectionItemPrice);
 
-                itemSelectionMessage = (getCurrentInventory().get(userSelection).getItemName() + " " + String.format("$%.2f",getCurrentInventory().get(userSelection).getItemPrice()) + "\n" + getCurrentInventory().get(userSelection).foodType());
+                userItemSelection.subtractQuantity();
 
-                log(currentTime() + " " + getCurrentInventory().get(userSelection).getItemName() + " " + userSelection + " " + String.format("$%.2f", (balance.getCurrentBalance() + getCurrentInventory().get(userSelection).getItemPrice())) + " " + String.format("$%.2f", balance.getCurrentBalance()));
+                itemSelectionMessage = (userItemSelection.getItemName() + " " + String.format("$%.2f", userItemSelection.getItemPrice()) + "\n" + userItemSelection.foodTypeSound());
+
+                log(currentTime() + " " + userItemSelection.getItemName() + " " + userSelection + " " + String.format("$%.2f", (balance.getCurrentBalance() + userItemSelection.getItemPrice())) + " " + String.format("$%.2f", balance.getCurrentBalance()));
             }
         } else {
             itemSelectionMessage = ("You do not have enough money. Try again.");
@@ -120,7 +133,7 @@ public class VendingMachine {
         return itemSelectionMessage;
     }
 
-   public String spitOutChange() {
+    public String spitOutChange() {
         double coins = balance.getCurrentBalance();
         DecimalFormat df2 = new DecimalFormat("###.##");
 
@@ -147,9 +160,13 @@ public class VendingMachine {
         int numberOfPennies = (int) (roundedRemainderAfterNickels / .01);
         pennies += numberOfPennies;
 
-        log(currentTime() + " GIVE CHANGE: " + String.format("$%.2f", balance.getCurrentBalance()) + " " + String.format("$%.2f", balance.zeroBalance()));
+        log(currentTime() + " GIVE CHANGE: " + String.format("$%.2f", getCurrentAmount()) + " " + String.format("$%.2f", balance.zeroBalance()));
 
         return "You received your change back: " + quarters + " quarters, " + dimes + " dimes, " + nickels + " nickels, " + pennies + " pennies.";
+    }
+
+    public double resetToZeroBalance() {
+        return balance.zeroBalance();
     }
 
     private void log(String input) {

@@ -31,7 +31,7 @@ public class BalanceTest {
     @Test
     public void test_purchase_and_subtract_from_current_balance() {
         //Arrange
-        double deposit = testObject.deposit(4);
+        testObject.deposit(4);
 
         //Act
         double result = testObject.purchase(1);
@@ -43,7 +43,7 @@ public class BalanceTest {
     @Test
     public void test_zeroBalance_from_current_balance() {
         //Arrange
-        double deposit = testObject.deposit(3);
+        testObject.deposit(3);
 
         //Act
         double result = testObject.zeroBalance();

@@ -54,7 +54,7 @@ public class VendingMachineCLI {
 	private void displayVendingMachineOptions() {
 		while (true) {
 			System.out.println();
-			System.out.printf("Current Balance: $%.2f", vm.getBalance().getCurrentBalance());
+			System.out.printf("Current Balance: $%.2f", vm.getCurrentAmount());
 			System.out.println();
 
 			String choice = (String) menu.getChoiceFromOptions(OPTIONS_MENU_OPTIONS);
@@ -67,7 +67,7 @@ public class VendingMachineCLI {
 			} else if (choice.equals(OPTIONS_MENU_FINISH_TRANSACTION)) {
 				System.out.println();
 				System.out.println(vm.spitOutChange());
-				vm.getBalance().zeroBalance();
+				vm.resetToZeroBalance();
 				break;
 			}
 		}
@@ -78,12 +78,11 @@ public class VendingMachineCLI {
 		System.out.print("How much money would you like to deposit: ");
 		String userInputMoneyDeposited = userInput.nextLine();
 
-		String result = vm.getMoneyParsed(userInputMoneyDeposited);
+		String result = vm.depositMoney(userInputMoneyDeposited);
 
 		if (!result.equals("")) {
 			System.out.println(result);
 		}
-
 	}
 
 	private void selectItem() {
@@ -94,7 +93,7 @@ public class VendingMachineCLI {
 		String userSelection = userInput.nextLine();
 		try {
 			System.out.println();
-			System.out.println(vm.getItemSelection(userSelection));
+			System.out.println(vm.itemSelection(userSelection));
 
 		} catch (Exception e) {
 

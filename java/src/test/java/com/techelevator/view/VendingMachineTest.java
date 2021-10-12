@@ -15,6 +15,8 @@ public class VendingMachineTest {
     @Before
     public void setup() {
         testObject = new VendingMachine(inventoryFile);
+        Balance testBalance = new Balance(0);
+        testObject.setBalance(testBalance);
     }
 
     //displayItems METHOD TESTS
@@ -37,96 +39,96 @@ public class VendingMachineTest {
         Assert.assertEquals(displayItems, result);
     }
 
-    //getMoneyParsed METHOD TESTS
+    //depositMoney METHOD TESTS
     @Test
-    public void test_getMoneyParsed_no_message_error() {
+    public void test_depositMoney_no_message_error() {
         //Act
-        String result = testObject.getMoneyParsed("5");
+        String result = testObject.depositMoney("5");
 
         //Assert
         Assert.assertEquals("", result);
     }
 
     @Test
-    public void test_getMoneyParsed_message_error_with_0() {
+    public void test_depositMoney_message_error_with_0() {
         //Act
-        String result = testObject.getMoneyParsed("0");
+        String result = testObject.depositMoney("0");
 
         //Assert
         Assert.assertEquals("\n" + "We don't accept this bill. Try again.", result);
     }
 
     @Test
-    public void test_getMoneyParsed_message_error_with_string() {
+    public void test_depositMoney_message_error_with_string() {
         //Act
-        String result = testObject.getMoneyParsed("abc");
+        String result = testObject.depositMoney("abc");
 
         //Assert
         Assert.assertEquals("\n" + "We don't accept this bill. Try again.", result);
     }
 
     @Test
-    public void test_getMoneyParsed_message_error_with_null() {
+    public void test_depositMoney_message_error_with_null() {
         //Act
-        String result = testObject.getMoneyParsed(null);
+        String result = testObject.depositMoney(null);
 
         //Assert
         Assert.assertEquals("\n" + "We don't accept this bill. Try again.", result);
     }
 
     @Test
-    public void test_getMoneyParsed_message_error_with_invalid_bill() {
+    public void test_depositMoney_message_error_with_invalid_bill() {
         //Act
-        String result = testObject.getMoneyParsed("3");
+        String result = testObject.depositMoney("3");
 
         //Assert
         Assert.assertEquals("\n" + "We don't accept this bill. Try again.", result);
     }
 
-    //getItemSelection METHOD TESTS
+    //itemSelection METHOD TESTS
     @Test
-    public void test_getItemSelection_dispense_item() {
+    public void test_itemSelection_dispense_item() {
         //Arrange
         testObject.getBalance().deposit(5);
 
         //Act
-        String result = testObject.getItemSelection("D4");
+        String result = testObject.itemSelection("D4");
 
         //Assert
         Assert.assertEquals("Triplemint $0.75" + "\n" + "\n" + "Chew Chew, Yum!", result);
     }
 
     @Test
-    public void test_getItemSelection_message_error_with_string() {
+    public void test_itemSelection_message_error_with_string() {
         //Act
-        String result = testObject.getItemSelection("abc");
+        String result = testObject.itemSelection("abc");
 
         //Assert
         Assert.assertEquals("This is not a valid code. Try again.", result);
     }
 
     @Test
-    public void test_getItemSelection_message_error_with_not_enough_money() {
+    public void test_itemSelection_message_error_with_not_enough_money() {
         //Act
-        String result = testObject.getItemSelection("D4");
+        String result = testObject.itemSelection("D4");
 
         //Assert
         Assert.assertEquals("You do not have enough money. Try again.", result);
     }
 
     @Test
-    public void test_getItemSelection_message_error_with_sold_out() {
+    public void test_itemSelection_message_error_with_sold_out() {
         //Arrange
         testObject.getBalance().deposit(5);
 
-        testObject.getItemSelection("D4");
-        testObject.getItemSelection("D4");
-        testObject.getItemSelection("D4");
-        testObject.getItemSelection("D4");
-        testObject.getItemSelection("D4");
+        testObject.itemSelection("D4");
+        testObject.itemSelection("D4");
+        testObject.itemSelection("D4");
+        testObject.itemSelection("D4");
+        testObject.itemSelection("D4");
 
         //Act
-        String result = testObject.getItemSelection("D4");
+        String result = testObject.itemSelection("D4");
 
         //Assert
         Assert.assertEquals("This item is SOLD OUT. Make another selection.", result);
@@ -145,6 +147,20 @@ public class VendingMachineTest {
 
         //Assert
         Assert.assertEquals("You received your change back: 4 quarters, 1 dimes, 1 nickels, 0 pennies.", result);
+    }
+
+    //resetToZeroBalance METHOD TESTS
+    @Test
+    public void test_resetToZeroBalance() {
+        //Arrange
+        testObject.getBalance().deposit(2);
+
+        //Act
+        double result = testObject.resetToZeroBalance();
+
+        //Assert
+        Assert.assertEquals(0, result, .001);
+
     }
 
 }
