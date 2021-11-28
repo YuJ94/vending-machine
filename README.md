@@ -2,7 +2,7 @@
 _Duration: 4 Days_
 
 ## Description
-A command-line interface (CLI) that imitates the function of a vending machine (Pair programming)
+A command-line interface (CLI) that imitates the function of a vending machine. (Pair programming)
 - Utilized File I/O to read, log, and audit transactions to track inventory while utilizing the unit testing framework, JUnit
 
 ## Technologies Used
